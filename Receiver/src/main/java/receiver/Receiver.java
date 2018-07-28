@@ -11,8 +11,11 @@ import javax.sound.sampled.SourceDataLine;
 
 public class Receiver {
 
+    private static int PORT = 7373;
+    private static int CHUNK_SIZE = 10000;
+
     public static void main(String[] args) {
-         String host = "localhost";
+        String host = "localhost";
 
         if (args.length > 0) {
             host = args[0];
@@ -25,7 +28,7 @@ public class Receiver {
         try {
             InetAddress ipAddr = InetAddress.getByName(host);
 
-            Socket s = new Socket(ipAddr, 7373);
+            Socket s = new Socket(ipAddr, PORT);
             InputStream is = s.getInputStream();
 
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, format);
@@ -35,7 +38,7 @@ public class Receiver {
 
             int numBytesRead;
 
-            byte[] data = new byte[10000];
+            byte[] data = new byte[CHUNK_SIZE];
 
             while (true) {
                 numBytesRead = is.read(data);
