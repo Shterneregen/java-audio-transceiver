@@ -1,6 +1,6 @@
-if (!hasProperty('mainClass')) {
-    ext.mainClass = 'transmitter.Transmitter'
-}
+//if (!hasProperty('mainClass')) {
+//    ext.mainClass = 'transmitter.Transmitter'
+//}
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -8,6 +8,8 @@ apply plugin: 'application'
 mainClassName = 'transmitter.Transmitter'
 
 jar {
+    baseName = 'Transmitter'
+
     manifest {
         attributes(
                 'Class-Path': configurations.compile.collect { it.getName() }.join(' '),

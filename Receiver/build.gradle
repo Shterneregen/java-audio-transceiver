@@ -7,6 +7,8 @@ apply plugin: 'application'
 mainClassName = 'receiver.Receiver'
 
 jar {
+    baseName = 'Receiver'
+
     manifest {
         attributes(
                 'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
