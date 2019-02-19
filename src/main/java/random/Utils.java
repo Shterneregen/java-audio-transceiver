@@ -1,4 +1,4 @@
-package transmitter;
+package random;
 
 import java.io.Closeable;
 import java.io.IOException;

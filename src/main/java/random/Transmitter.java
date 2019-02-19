@@ -1,4 +1,4 @@
-package transmitter;
+package random;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,25 +14,19 @@ public class Transmitter {
     private static int PORT = 7373;
 
     private static List<Sender> senderList = new ArrayList<>();
-    public static final Object monitor = new Object();
 
     public static String STOP_WORD = "stop";
 
-    public static void main(String[] args) {
+    public static void transmit(String param) {
 
-        if (args.length > 0) {
-            String arg = args[0];
-            if (STOP_WORD.equals(arg)) {
-                stopTransmitter();
-                return;
-            }
+        if (STOP_WORD.equals(param)) {
+            stopTransmitter();
+            return;
         }
 
         try {
             ServerSocket ss = new ServerSocket(PORT);
 
-//            Scanner sc = new Scanner(System.in);
-//            while (!sc.next().equals("quit")) {
             while (true) {
                 Socket s = ss.accept();
 
@@ -44,19 +38,17 @@ public class Transmitter {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-//            mr.setFinishFlag();
-            senderList.forEach(Sender::setFinishFlag);
+            senderList.forEach(Sender::setStop);
         }
     }
 
     private static void stopTransmitter() {
         System.out.println("stop");
         String host = "localhost";
-        InetAddress ipAddr = null;
         Socket s = null;
         OutputStream os = null;
         try {
-            ipAddr = InetAddress.getByName(host);
+            InetAddress ipAddr = InetAddress.getByName(host);
             s = new Socket(ipAddr, PORT);
             os = s.getOutputStream();
             os.write("exit".getBytes(Charset.forName("UTF-8")));
