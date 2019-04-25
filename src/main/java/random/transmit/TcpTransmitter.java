@@ -1,4 +1,4 @@
-package random;
+package random.transmit;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,33 +12,35 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Transmitter {
+public class TcpTransmitter implements Transmitter {
 
-    private static final Logger LOG = Logger.getLogger(Transmitter.class.getName());
+    private static final Logger LOG = Logger.getLogger(TcpTransmitter.class.getName());
 
-    private static final int DEFAULT_PORT = 7373;
     private static final String STOP_WORD = "stop";
 
     private static List<Sender> senderList = new ArrayList<>();
 
     private static boolean stop = false;
+    private int port;
 
-    private Transmitter() {
+    public TcpTransmitter(int port) {
+        this.port = port;
     }
 
-    public static void transmit(String param) throws UnknownHostException {
+    @Override
+    public void transmit() {
 
-        if (STOP_WORD.equals(param)) {
-            stopTransmitter();
-            return;
-        }
+//        if (STOP_WORD.equals(param)) {
+//            stopTransmitter();
+//            return;
+//        }
 
-        try (ServerSocket ss = new ServerSocket(DEFAULT_PORT)) {
+        try (ServerSocket ss = new ServerSocket(port)) {
 
             while (!stop) {
-                Socket s = ss.accept();
+                Socket socket = ss.accept();
 
-                Sender sndr = new Sender(s);
+                Sender sndr = new Sender(socket);
                 senderList.add(sndr);
                 sndr.start();
             }
@@ -50,11 +52,11 @@ public class Transmitter {
         }
     }
 
-    private static void stopTransmitter() throws UnknownHostException {
-        LOG.info("stop");
+    public void stopTransmitter(int port) throws UnknownHostException {
+        LOG.info("Transmitter was stopped");
         String host = "localhost";
         InetAddress ipAddr = InetAddress.getByName(host);
-        try (Socket socket = new Socket(ipAddr, DEFAULT_PORT);
+        try (Socket socket = new Socket(ipAddr, port);
              OutputStream os = socket.getOutputStream()) {
             os.write("exit".getBytes(Charset.forName("UTF-8")));
         } catch (IOException e) {

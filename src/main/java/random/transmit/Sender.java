@@ -1,4 +1,6 @@
-package random;
+package random.transmit;
+
+import random.audio.MicrophoneReader;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.io.OutputStream;

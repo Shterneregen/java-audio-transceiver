@@ -1,4 +1,4 @@
-package random;
+package random.audio;
 
 import javax.sound.sampled.*;
 import java.util.logging.Level;
@@ -39,7 +39,7 @@ public class MicrophoneReader {
         }
     }
 
-    TargetDataLine getMicrophone() {
+    public TargetDataLine getMicrophone() {
         return microphone;
     }
 }
