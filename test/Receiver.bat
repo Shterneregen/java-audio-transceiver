@@ -1,3 +1,3 @@
 @echo off
-java -jar audio.jar -r 192.168.31.76
+java -jar audio.jar -r localhost
 pause

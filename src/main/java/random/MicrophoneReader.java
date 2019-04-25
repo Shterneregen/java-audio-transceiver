@@ -1,12 +1,17 @@
 package random;
 
 import javax.sound.sampled.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class MicrophoneReader extends Thread {
+public class MicrophoneReader {
+
+    private static final Logger LOG = Logger.getLogger(MicrophoneReader.class.getName());
+
     private static MicrophoneReader instance = new MicrophoneReader();
 
     public static MicrophoneReader getInstance() {
-        System.out.println("new MicrophoneReader");
+        LOG.info("new MicrophoneReader");
         return instance;
     }
 
@@ -26,10 +31,10 @@ public class MicrophoneReader extends Thread {
             microphone = (TargetDataLine) AudioSystem.getLine(info);
             microphone.open(format);
             microphone.start();
-            System.out.println("Microphone reader started");
+            LOG.info("Microphone reader started");
             return true;
         } catch (LineUnavailableException e) {
-            e.printStackTrace();
+            LOG.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
     }

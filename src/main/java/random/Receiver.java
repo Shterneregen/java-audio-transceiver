@@ -7,21 +7,28 @@ import javax.sound.sampled.SourceDataLine;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Receiver {
 
-    private static int PORT = 7373;
-    private static int CHUNK_SIZE = 10000;
+    private static final Logger LOG = Logger.getLogger(Receiver.class.getName());
 
-    public static void receive(String host) {
+    private static final int PORT = 7373;
+    private static final int CHUNK_SIZE = 10000;
+    private static boolean stop = false;
+
+    private Receiver() {
+    }
+
+    public static void receive(String host) throws UnknownHostException {
         // AudioFormat format = new AudioFormat(16000.0f, 16, 2, true, false);
         AudioFormat format = new AudioFormat(8000.0f, 8, 1, true, false);
         SourceDataLine speakers;
 
-        try {
-            InetAddress ipAddr = InetAddress.getByName(host);
-
-            Socket socket = new Socket(ipAddr, PORT);
+        InetAddress address = InetAddress.getByName(host);
+        try (Socket socket = new Socket(address, PORT)) {
             InputStream is = socket.getInputStream();
 
             DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, format);
@@ -33,12 +40,12 @@ public class Receiver {
 
             byte[] data = new byte[CHUNK_SIZE];
 
-            while (true) {
+            while (!stop) {
                 numBytesRead = is.read(data);
                 speakers.write(data, 0, numBytesRead);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 }
