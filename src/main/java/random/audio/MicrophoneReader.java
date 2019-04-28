@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 public class MicrophoneReader {
 
     private static final Logger LOG = Logger.getLogger(MicrophoneReader.class.getName());
+    private static AudioFormat format = AudioFormatVariants.FORMAT_1;
+    private TargetDataLine microphone;
 
     private static MicrophoneReader instance = new MicrophoneReader();
 
@@ -14,10 +16,6 @@ public class MicrophoneReader {
         LOG.info("new MicrophoneReader");
         return instance;
     }
-
-    //         AudioFormat format = new AudioFormat(16000.0f, 16, 2, true, false);
-    private AudioFormat format = new AudioFormat(8000.0f, 8, 1, true, false);
-    private TargetDataLine microphone;
 
     private MicrophoneReader() {
     }
