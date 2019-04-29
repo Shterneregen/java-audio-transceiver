@@ -40,9 +40,7 @@ public class Main {
     }
 
     private static void receiveTcp(String[] args) throws UnknownHostException {
-        if (args.length < 2) {
-            throw new IllegalArgumentException("You should pass host and port params!");
-        }
+        validateParams(args, 2, "You should pass host and port params!");
         String host = args[0];
         int port = Integer.parseInt(args[1]);
         Receiver receiver = new TcpReceiver(host, port);
@@ -50,22 +48,24 @@ public class Main {
     }
 
     private static void receiveUdp(String[] args) throws UnknownHostException {
-        if (args.length < 1) {
-            throw new IllegalArgumentException(PORT_PARAM_NOT_FOUND);
-        }
+        validateParams(args, 1, PORT_PARAM_NOT_FOUND);
         int port = Integer.parseInt(args[0]);
         Receiver receiver = new UdpReceiver(port);
         receiver.receive();
     }
 
     private static void transmit(String[] args, boolean tcp) {
-        if (args.length < 1) {
-            throw new IllegalArgumentException(PORT_PARAM_NOT_FOUND);
-        }
+        validateParams(args, 1, PORT_PARAM_NOT_FOUND);
         int port = Integer.parseInt(args[0]);
         Transmitter transmitter = tcp
                 ? new TcpTransmitter(port)
                 : new UdpTransmitter(port);
         transmitter.transmit();
+    }
+
+    private static void validateParams(String[] args, int validParamNumber, String validateMsg) {
+        if (args.length < validParamNumber) {
+            throw new IllegalArgumentException(validateMsg);
+        }
     }
 }
