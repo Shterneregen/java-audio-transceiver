@@ -1,17 +1,16 @@
-if (!hasProperty('mainClass')) {
-    ext.mainClass = 'random.Main'
+plugins {
+    id 'java'
+    id 'application'
 }
-apply plugin: 'java'
-apply plugin: 'application'
 
 mainClassName = 'random.Main'
 
 jar {
-    baseName = 'audio'
+    archivesBaseName = 'audio'
 
     manifest {
         attributes(
-                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Class-Path': configurations.compileClasspath.files.collect { "$it.name" }.join(' '),
                 'Main-Class': 'random.Main'
         )
     }

@@ -8,11 +8,12 @@ java -jar audio.jar -t TRANSMITTER_PORT
 ```
 java -jar audio.jar -r TRANSMITTER_IP TRANSMITTER_PORT
 ```
+---
 * UDP Transmitter
 ```
 java -jar audio.jar -tu TRANSMITTER_PORT
 ```
-* Receiver
+* UDP Receiver
 ```
 java -jar audio.jar -ru TRANSMITTER_PORT
 ```
