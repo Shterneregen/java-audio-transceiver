@@ -2,46 +2,36 @@ package random.receive;
 
 import random.audio.SpeakerWriter;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UdpReceiver implements Receiver {
 
     private static final Logger LOG = Logger.getLogger(UdpReceiver.class.getName());
-
     private static final int CHUNK_SIZE = 256;
-    private static boolean stop = false;
 
-    private DatagramSocket socket;
-    private int port;
+    private final int port;
+
+    private boolean stop = false;
 
     public UdpReceiver(int port) {
         this.port = port;
-        init();
-    }
-
-    private void init() {
-        try {
-            socket = new DatagramSocket(port);
-        } catch (SocketException e) {
-            LOG.log(Level.SEVERE, e.getMessage(), e);
-        }
     }
 
     @Override
-    public void receive() {
-        try {
-            SourceDataLine speakers = SpeakerWriter.initSpeakers();
+    public void receive(AudioFormat format) {
+        try (DatagramSocket socket = new DatagramSocket(port)) {
+            SourceDataLine speakers = SpeakerWriter.initSpeakers(format);
             byte[] data = new byte[CHUNK_SIZE];
 
             while (!stop) {
-                DatagramPacket packet = new DatagramPacket(data, data.length);
-                socket.receive(packet);
+                socket.receive(new DatagramPacket(data, data.length));
                 speakers.write(data, 0, data.length);
             }
         } catch (LineUnavailableException | IOException e) {

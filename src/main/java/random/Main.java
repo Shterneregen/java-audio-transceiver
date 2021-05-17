@@ -1,5 +1,6 @@
 package random;
 
+import random.audio.AudioFormatVariants;
 import random.receive.Receiver;
 import random.receive.TcpReceiver;
 import random.receive.UdpReceiver;
@@ -44,14 +45,14 @@ public class Main {
         String host = args[0];
         int port = Integer.parseInt(args[1]);
         Receiver receiver = new TcpReceiver(host, port);
-        receiver.receive();
+        receiver.receive(AudioFormatVariants.FORMAT_8000);
     }
 
     private static void receiveUdp(String[] args) throws UnknownHostException {
         validateParams(args, 1, PORT_PARAM_NOT_FOUND);
         int port = Integer.parseInt(args[0]);
         Receiver receiver = new UdpReceiver(port);
-        receiver.receive();
+        receiver.receive(AudioFormatVariants.FORMAT_8000);
     }
 
     private static void transmit(String[] args, boolean tcp) {

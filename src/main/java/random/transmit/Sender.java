@@ -1,36 +1,34 @@
 package random.transmit;
 
+import random.audio.AudioFormatVariants;
 import random.audio.MicrophoneReader;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Sender extends Thread {
 
     private static final Logger LOG = Logger.getLogger(Sender.class.getName());
+    private static final int CHUNK_SIZE = 256;
+    private static final AtomicInteger sendersCount = new AtomicInteger(0);
 
-    private static final int CHUNK_SIZE = 10000;
+    private final Socket socket;
+    private final int senderNumber;
+    private final MicrophoneReader mr;
 
-    private Socket socket;
-    private volatile boolean stop;
-    private int senderNumber;
-    private static volatile Integer sendersCreated = 0;
-
-    private MicrophoneReader mr;
+    private volatile boolean stop = false;
 
     Sender(Socket socket) throws LineUnavailableException {
         this.socket = socket;
-        stop = false;
-        senderNumber = ++sendersCreated;
-        LOG.log(Level.INFO, "Sender started: {0}", senderNumber);
+        senderNumber = sendersCount.incrementAndGet();
+        LOG.log(Level.INFO, "Sender started: {0}", sendersCount);
 
         mr = MicrophoneReader.getInstance();
-        if (!mr.init()) {
-            throw new LineUnavailableException("Cannot init MicrophoneReader");
-        }
+        mr.init(AudioFormatVariants.FORMAT_8000);
     }
 
     void setStop() {

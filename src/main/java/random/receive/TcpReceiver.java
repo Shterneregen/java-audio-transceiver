@@ -2,7 +2,8 @@ package random.receive;
 
 import random.audio.SpeakerWriter;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.SourceDataLine;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -13,12 +14,12 @@ import java.util.logging.Logger;
 public class TcpReceiver implements Receiver {
 
     private static final Logger LOG = Logger.getLogger(Receiver.class.getName());
+    private static final int CHUNK_SIZE = 256;
 
-    private static final int CHUNK_SIZE = 10000;
-    private static boolean stop = false;
+    private final String host;
+    private final int port;
 
-    private String host;
-    private int port;
+    private boolean stop = false;
 
     public TcpReceiver(String host, int port) {
         this.host = host;
@@ -26,13 +27,12 @@ public class TcpReceiver implements Receiver {
     }
 
     @Override
-    public void receive() throws UnknownHostException {
-
+    public void receive(AudioFormat format) throws UnknownHostException {
         InetAddress address = InetAddress.getByName(host);
-        try (Socket socket = new Socket(address, port)) {
-            InputStream is = socket.getInputStream();
+        try (Socket socket = new Socket(address, port);
+             InputStream is = socket.getInputStream()) {
 
-            SourceDataLine speakers = SpeakerWriter.initSpeakers();
+            SourceDataLine speakers = SpeakerWriter.initSpeakers(format);
             int numBytesRead;
             byte[] data = new byte[CHUNK_SIZE];
 

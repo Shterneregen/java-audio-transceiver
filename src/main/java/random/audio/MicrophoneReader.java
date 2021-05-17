@@ -1,39 +1,42 @@
 package random.audio;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MicrophoneReader {
 
     private static final Logger LOG = Logger.getLogger(MicrophoneReader.class.getName());
-    private static AudioFormat format = AudioFormatVariants.FORMAT_1;
+    private static final MicrophoneReader instance = new MicrophoneReader();
+
     private TargetDataLine microphone;
 
-    private static MicrophoneReader instance = new MicrophoneReader();
-
     public static MicrophoneReader getInstance() {
-        LOG.info("new MicrophoneReader");
         return instance;
     }
 
     private MicrophoneReader() {
     }
 
-    public boolean init() {
+    public void init(AudioFormat format) throws LineUnavailableException {
         try {
-            if (microphone != null && microphone.isOpen()) return true;
-            microphone = AudioSystem.getTargetDataLine(format);
+            if (microphone != null && microphone.isOpen()) {
+                return;
+            }
 
-            DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-            microphone = (TargetDataLine) AudioSystem.getLine(info);
+            microphone = AudioSystem.getTargetDataLine(format);
             microphone.open(format);
             microphone.start();
+
+//            Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
+            LOG.info(String.valueOf(microphone.getLineInfo()));
             LOG.info("Microphone reader started");
-            return true;
         } catch (LineUnavailableException e) {
             LOG.log(Level.SEVERE, e.getMessage(), e);
-            return false;
+            throw new LineUnavailableException("Cannot init MicrophoneReader");
         }
     }
 

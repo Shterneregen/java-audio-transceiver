@@ -6,7 +6,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -15,13 +15,12 @@ import java.util.logging.Logger;
 public class TcpTransmitter implements Transmitter {
 
     private static final Logger LOG = Logger.getLogger(TcpTransmitter.class.getName());
-
     private static final String STOP_WORD = "stop";
+    private static final List<Sender> senderList = new ArrayList<>();
 
-    private static List<Sender> senderList = new ArrayList<>();
+    private final int port;
 
-    private static boolean stop = false;
-    private int port;
+    private boolean stop = false;
 
     public TcpTransmitter(int port) {
         this.port = port;
@@ -58,7 +57,7 @@ public class TcpTransmitter implements Transmitter {
         InetAddress ipAddr = InetAddress.getByName(host);
         try (Socket socket = new Socket(ipAddr, port);
              OutputStream os = socket.getOutputStream()) {
-            os.write("exit".getBytes(Charset.forName("UTF-8")));
+            os.write("exit".getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             LOG.log(Level.SEVERE, e.getMessage(), e);
         }
