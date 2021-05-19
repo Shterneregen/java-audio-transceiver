@@ -2,6 +2,7 @@ package random.transmit;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
 
 public class TcpTransmitter implements Transmitter {
 
-    private static final Logger LOG = Logger.getLogger(TcpTransmitter.class.getName());
+    private static final Logger LOG = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
     private static final String STOP_WORD = "stop";
     private static final List<Sender> senderList = new ArrayList<>();
 
@@ -39,14 +40,15 @@ public class TcpTransmitter implements Transmitter {
             while (!stop) {
                 Socket socket = ss.accept();
 
-                Sender sndr = new Sender(socket);
-                senderList.add(sndr);
-                sndr.start();
+                Sender sender = new Sender(socket);
+                senderList.add(sender);
+                sender.start();
             }
 
         } catch (Exception e) {
             LOG.log(Level.SEVERE, e.getMessage(), e);
         } finally {
+            LOG.info("Stopping list of senders");
             senderList.forEach(Sender::setStop);
         }
     }

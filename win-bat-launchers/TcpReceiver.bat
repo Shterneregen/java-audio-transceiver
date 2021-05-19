@@ -1,3 +1,3 @@
 @echo off
-java -jar audio.jar -r localhost 9999
+java -jar audio.jar -r 9999 localhost
 pause
