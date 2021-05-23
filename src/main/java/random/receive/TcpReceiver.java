@@ -37,12 +37,12 @@ public class TcpReceiver implements Receiver {
             byte[] data = new byte[CHUNK_SIZE];
 
             while (!stop) {
-                try {
-                    numBytesRead = is.read(data);
-                    speaker.write(data, 0, numBytesRead);
-                } catch (Exception e) {
-                    LOG.log(Level.SEVERE, e.getMessage(), e);
+                numBytesRead = is.read(data);
+                if (numBytesRead == -1) {
+                    LOG.log(Level.SEVERE, "Transmitter was stopped");
+                    break;
                 }
+                speaker.write(data, 0, numBytesRead);
             }
         } catch (Exception e) {
             LOG.log(Level.SEVERE, e.getMessage(), e);
